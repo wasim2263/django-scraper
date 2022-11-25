@@ -17,5 +17,6 @@ django-query-parameters
 num2words==0.5.10
 qrcode==6.1
 django-jsonfield
+Scrapy==2.7.1
 
 

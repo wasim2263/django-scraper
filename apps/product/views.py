@@ -11,6 +11,7 @@ from django.views import View
 
 from apps.product.forms import ProductForm
 from apps.product.models import Product
+from apps.source.tasks import scrap_product
 
 
 class ProductListView(View):
@@ -24,6 +25,7 @@ class ProductListView(View):
 
 class ProductScrapView(View):
     def get(self, request):
+        scrap_product.delay()
         return redirect('product:product-list')
 
 #
