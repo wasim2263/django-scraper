@@ -38,12 +38,17 @@ class ProductSpider(scrapy.Spider):
 
     def parse_product_details(self, response):
         data = response.css("div.product-description")
-        product_summary = data.css("div.description-block").css("li *::text").getall()
-        product_summary = {i: summary for i, summary in enumerate(product_summary, start=1)}
-        product_data = {
-            "title": data.css("h1::text").extract_first(),
-            "price": data.css("span.item.price").css("span::text").extract_first(),
-            "currency": data.css("span.item.price").css("small::text").extract_first(),
-            "summary": product_summary
-        }
-        product = Product.objects.update_or_create(title=product_data["title"], defaults=product_data)
+        title = data.css("h1::text").extract_first()
+        if title:
+
+            product_summary = data.css("div.description-block").css("li *::text").getall()
+            product_summary = {i: summary for i, summary in enumerate(product_summary, start=1)}
+            product_data = {
+                "title": title,
+                "price": data.css("span.item.price").css("span::text").extract_first().replace(',', ''),
+                "currency": data.css("span.item.price").css("small::text").extract_first(),
+                "summary": product_summary
+            }
+            product = Product.objects.update_or_create(title=product_data["title"], defaults=product_data)
+        else:
+            print('----failed to parse', response.request.url)
