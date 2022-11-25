@@ -49,6 +49,11 @@ class ProductSpider(scrapy.Spider):
                 "currency": data.css("span.item.price").css("small::text").extract_first(),
                 "summary": product_summary
             }
-            product = Product.objects.update_or_create(title=product_data["title"], defaults=product_data)
+            try:
+                Product.objects.update_or_create(title=product_data["title"], defaults=product_data)
+            except Exception as err:
+                print(f'Error: {err}')
+                print('----failed to parse product url', response.request.url)
+                print('----failed to parse other values', product_data)
         else:
             print('----failed to parse', response.request.url)
