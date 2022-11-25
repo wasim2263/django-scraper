@@ -11,6 +11,8 @@ class ProductSpider(scrapy.Spider):
 
     # this is what start_urls does
     def start_requests(self):
+        # taking only the url from the database
+        # TODO:: need to make it generic so that multiple source can be handled
         source = Source.objects.first()
         self.base_url = source.url
         yield scrapy.Request(url=self.base_url, callback=self.parse)
@@ -44,4 +46,4 @@ class ProductSpider(scrapy.Spider):
             "currency": data.css("span.item.price").css("small::text").extract_first(),
             "summary": product_summary
         }
-        product = Product.objects.update_or_create(identifier="title", defaults=product_summary)
+        product = Product.objects.update_or_create(title=product_data["title"], defaults=product_data)
